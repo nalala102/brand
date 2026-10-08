@@ -199,40 +199,48 @@
 
     .brand-detail-grid {
       display: grid;
-      grid-template-columns: 240px 1fr;
+      grid-template-columns: 280px 1fr;
       gap: 32px;
     }
     
+    /* 로고 컨테이너 네모칸 확대 및 스타일 수정 */
     .logo-container {
-      background: #fafafa;
+      background: #ffffff;
       border: 2px dashed #cbd5e1;
       border-radius: 16px;
-      padding: 24px;
+      padding: 20px;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+      min-height: 280px;
     }
     .logo-large {
-      font-size: 70px;
-      width: 130px;
-      height: 130px;
-      line-height: 130px;
-      background: #ffffff;
-      border-radius: 50%;
-      margin-bottom: 12px;
+      font-size: 100px;
+      width: 100%;
+      height: 220px;
+      border-radius: 12px;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      background: #f8fafc;
     }
     .logo-large img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      object-position: center;
+      object-fit: contain; /* 이미지 비율을 유지하면서 네모칸에 꽉 차게 */
+    }
+    .logo-sub-slogan {
+      font-size: 0.9rem;
+      color: #475569;
+      font-weight: 700;
+      font-style: italic;
+      word-break: keep-all;
+      line-height: 1.4;
+      padding: 0 4px;
     }
 
     .info-box {
@@ -313,7 +321,7 @@
         <div class="brand-detail-grid">
           <div class="logo-container">
             <div class="logo-large" id="pageLogo">🎨</div>
-            <span style="font-size:0.85rem; color:#64748b; font-weight:600;">학생 브랜드 로고</span>
+            <div class="logo-sub-slogan" id="pageLogoSubSlogan">"슬로건"</div>
           </div>
 
           <div>
@@ -359,7 +367,7 @@
       { id: 18, name: "한소망", brand: "Cat's Paw", icon: "🐾", photo: "한소망_얼굴.jpg", image: "한소망.png", slogan: "조용하지만 확실하게 다가가는 온기", story: "귀여운 고양이 발바닥 심볼을 사용했습니다.\n조용하고 드러나지 않지만, 꾸준하고 차분하게 사람들에게 따뜻한 온기를 전해주겠다는 스토리입니다." },
       { id: 19, name: "홍유진", brand: "Compass Light", icon: "🧭", photo: "홍유진_얼굴.jpg", image: "홍유진.png", slogan: "올바른 방향을 밝히는 나침반", story: "빛나는 나침반 바늘의 모습을 가공했습니다.\n남들의 시선이나 유행에 흔들리지 않고 스스로가 세운 올바른 길을 걸어가겠다는 가치관입니다." },
       { id: 20, name: "홍진오", brand: "Ribbon Heart", icon: "🎀", photo: "홍진오_얼굴.jpg", image: "홍진오.png", slogan: "사람과 사람의 마음을 이어주다", story: "매끄러운 리본 끈이 하트 모양을 완성하는 로고입니다.\n타인과의 공감 능력을 바탕으로 마음과 마음을 연결하는 다리가 되겠다는 따뜻함이 담겨 있습니다." },
-      { id: 21, name: "전민재", brand: "Crown Vision", icon: "👑", photo: "전민재_얼굴.jpg", image: "전민재.png", slogan: "당당하게 스스로의 삶을 다스리다", story: "왕관 모티브를 현대적인 도형 형태로 정돈했습니다.\n내 삶의 주인이 되어 스스로에 대한 신뢰와 자존감을 바탕으로 당당히 세상을 리드하겠다는 포부입니다." }
+      { id: 21, name: "전민재", brand: "Crown Vision", icon: "👑", photo: "전민재_얼굴.JPG", image: "전민재.png", slogan: "당당하게 스스로의 삶을 다스리다", story: "왕관 모티브를 현대적인 도형 형태로 정돈했습니다.\n내 삶의 주인이 되어 스스로에 대한 신뢰와 자존감을 바탕으로 당당히 세상을 리드하겠다는 포부입니다." }
     ];
 
     const studentBar = document.getElementById("studentBar");
@@ -372,6 +380,7 @@
 
     const pageTitle = document.getElementById("pageTitle");
     const pageLogo = document.getElementById("pageLogo");
+    const pageLogoSubSlogan = document.getElementById("pageLogoSubSlogan");
     const pageSlogan = document.getElementById("pageSlogan");
     const pageBrandName = document.getElementById("pageBrandName");
     const pageStory = document.getElementById("pageStory");
@@ -379,10 +388,19 @@
 
     totalCount.textContent = `총 ${students.length}명`;
 
-    // 이미지 로드 실패 시 이모지로 복원 및 .png, .jpg 대소문자 예비 대처
+    // 이미지 경로 스마트 로더 (대소문자 자동 호환)
     function getImageHtml(filename, altText, defaultIcon) {
       if (!filename) return defaultIcon;
-      return `<img src="./images/${filename}" alt="${altText}" onerror="this.outerHTML='${defaultIcon}';">`;
+      
+      let altExt = filename;
+      if (filename.endsWith('.jpg')) altExt = filename.replace('.jpg', '.JPG');
+      else if (filename.endsWith('.JPG')) altExt = filename.replace('.JPG', '.jpg');
+      else if (filename.endsWith('.png')) altExt = filename.replace('.png', '.PNG');
+      else if (filename.endsWith('.PNG')) altExt = filename.replace('.PNG', '.png');
+
+      return `<img src="./images/${filename}" alt="${altText}" 
+                onerror="this.onerror=null; this.src='./images/${altExt}'; 
+                this.onerror=function(){ this.outerHTML='${defaultIcon}'; };">`;
     }
 
     students.forEach((s, idx) => {
@@ -415,6 +433,7 @@
 
       pageTitle.textContent = `${s.name} 학생의 브랜드 소개 페이지`;
       pageLogo.innerHTML = getImageHtml(s.image, s.name + ' 브랜드 로고', s.icon);
+      pageLogoSubSlogan.textContent = `"${s.slogan}"`; // 로고 바로 밑에 슬로건 자동 입력
       pageSlogan.textContent = `"${s.slogan}"`;
       pageBrandName.textContent = s.brand;
       pageStory.textContent = s.story;
