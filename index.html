@@ -457,7 +457,7 @@
       const btns = studentBar.querySelectorAll(".student-btn");
       btns.forEach((btn, i) => btn.classList.toggle("active", i === index));
 
-      pageTitle.textContent = `${s.name} 학생의 브랜드 및 에코백 작품 소개`;
+      pageTitle.textContent = `${s.name} 학생의 핵심개념을 적용한 브랜드 및 에코백 작품 소개`;
       pageLogo.innerHTML = getImageHtml(s.image, s.name + ' 브랜드 로고', s.icon);
       pageEcobag.innerHTML = getImageHtml(s.ecobag, s.name + ' 에코백 작품', '🛍️');
       pageLogoSubSlogan.textContent = `"${s.slogan}"`;
